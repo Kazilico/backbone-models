@@ -26,6 +26,14 @@ var Reel = Backbone.Model.extend({
   initialize: function(attributes) {
     this.spinning = false
     this.result = ""
+
+    this.on("spin", function(){
+      this.spin()
+    })
+
+    this.on("stop", function(){
+      this.stopSpinning()
+    })
   },
 
   /*
@@ -44,8 +52,8 @@ var Reel = Backbone.Model.extend({
   */
   stopSpinning: function() {
     this.spinning = false
-    this.result = getResult
-    this.trigger = this.spinning
+    this.result = this.getResult()
+    this.trigger("stopped")
   },
 
   /*
@@ -57,7 +65,10 @@ var Reel = Backbone.Model.extend({
     Otherwise, return a random item from the symbols attribute.
   */
   getResult: function() {
-  
+    if (Math.random() < (this.get("blankRate"))) {
+      return ""
+    }
+    return _.sample(this.get("symbols"))
   },
 
   /*
@@ -66,7 +77,10 @@ var Reel = Backbone.Model.extend({
     Otherwise, return the "result" property of this model.
   */
   display: function() {
-
+    if (this.spinning === true) {
+      return (this.spinning = false)
+    }
+    return (this.result)
   }
 
 })
